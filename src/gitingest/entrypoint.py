@@ -7,9 +7,10 @@ import errno
 import shutil
 import stat
 import sys
+from collections.abc import AsyncGenerator, Callable
 from contextlib import asynccontextmanager
 from pathlib import Path
-from typing import TYPE_CHECKING, AsyncGenerator, Callable
+from typing import TYPE_CHECKING
 from urllib.parse import urlparse
 
 from gitingest.clone import clone_repo
@@ -77,7 +78,7 @@ async def ingest_async(
         If ``"-"`` (dash), the results are written to ``stdout``.
         If ``None``, the results are not written to a file.
 
-    Returns
+    Returns:
     -------
     tuple[str, str, str]
         A tuple containing:
@@ -193,7 +194,7 @@ def ingest(
         If ``"-"`` (dash), the results are written to ``stdout``.
         If ``None``, the results are not written to a file.
 
-    Returns
+    Returns:
     -------
     tuple[str, str, str]
         A tuple containing:
@@ -201,7 +202,7 @@ def ingest(
         - A tree-like string representation of the file structure.
         - The content of the files in the repository or directory.
 
-    See Also
+    See Also:
     --------
     ``ingest_async`` : The asynchronous version of this function.
 
@@ -239,7 +240,9 @@ def _override_branch_and_tag(query: IngestionQuery, branch: str | None, tag: str
 
     """
     if tag and query.tag and tag != query.tag:
-        msg = f"Warning: The specified tag '{tag}' overrides the tag found in the URL '{query.tag}'."
+        msg = (
+            f"Warning: The specified tag '{tag}' overrides the tag found in the URL '{query.tag}'."
+        )
         logger.warning(msg)
 
     query.tag = tag or query.tag
@@ -273,7 +276,9 @@ def _apply_gitignores(query: IngestionQuery) -> None:
 
 
 @asynccontextmanager
-async def _clone_repo_if_remote(query: IngestionQuery, *, token: str | None) -> AsyncGenerator[None]:
+async def _clone_repo_if_remote(
+    query: IngestionQuery, *, token: str | None
+) -> AsyncGenerator[None]:
     """Async context-manager that clones ``query.url`` if present.
 
     If ``query.url`` is set, the repo is cloned, control is yielded, and the temp directory is removed on exit.
@@ -288,10 +293,7 @@ async def _clone_repo_if_remote(query: IngestionQuery, *, token: str | None) -> 
 
     """
     kwargs = {}
-    if sys.version_info >= (3, 12):
-        kwargs["onexc"] = _handle_remove_readonly
-    else:
-        kwargs["onerror"] = _handle_remove_readonly
+    kwargs["onexc"] = _handle_remove_readonly
 
     if query.url:
         clone_config = query.extract_clone_config()

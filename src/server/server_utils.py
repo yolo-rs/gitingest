@@ -25,12 +25,12 @@ async def rate_limit_exception_handler(request: Request, exc: Exception) -> Resp
     exc : Exception
         The exception raised, expected to be RateLimitExceeded.
 
-    Returns
+    Returns:
     -------
     Response
         A response indicating that the rate limit has been exceeded.
 
-    Raises
+    Raises:
     ------
     exc
         If the exception is not a RateLimitExceeded error, it is re-raised.

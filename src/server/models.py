@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from enum import Enum
-from typing import TYPE_CHECKING, Union
+from enum import StrEnum
+from typing import TYPE_CHECKING
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from server.form_types import IntForm, OptStrForm, StrForm
 
 
-class PatternType(str, Enum):
+class PatternType(StrEnum):
     """Enumeration for pattern types used in file filtering."""
 
     INCLUDE = "include"
@@ -25,7 +25,7 @@ class PatternType(str, Enum):
 class IngestRequest(BaseModel):
     """Request model for the /api/ingest endpoint.
 
-    Attributes
+    Attributes:
     ----------
     input_text : str
         The Git repository URL or slug to ingest.
@@ -42,7 +42,9 @@ class IngestRequest(BaseModel):
 
     input_text: str = Field(..., description="Git repository URL or slug to ingest")
     max_file_size: int = Field(..., ge=1, le=MAX_FILE_SIZE_KB, description="File size in KB")
-    pattern_type: PatternType = Field(default=PatternType.EXCLUDE, description="Pattern type for file filtering")
+    pattern_type: PatternType = Field(
+        default=PatternType.EXCLUDE, description="Pattern type for file filtering"
+    )
     pattern: str = Field(default="", description="Glob/regex pattern for file filtering")
     token: str | None = Field(default=None, description="GitHub PAT for private repositories")
 
@@ -65,7 +67,7 @@ class IngestRequest(BaseModel):
 class IngestSuccessResponse(BaseModel):
     """Success response model for the /api/ingest endpoint.
 
-    Attributes
+    Attributes:
     ----------
     repo_url : str
         The original repository URL that was processed.
@@ -102,7 +104,7 @@ class IngestSuccessResponse(BaseModel):
 class IngestErrorResponse(BaseModel):
     """Error response model for the /api/ingest endpoint.
 
-    Attributes
+    Attributes:
     ----------
     error : str
         Error message describing what went wrong.
@@ -113,13 +115,13 @@ class IngestErrorResponse(BaseModel):
 
 
 # Union type for API responses
-IngestResponse = Union[IngestSuccessResponse, IngestErrorResponse]
+IngestResponse = IngestSuccessResponse | IngestErrorResponse
 
 
 class S3Metadata(BaseModel):
     """Model for S3 metadata structure.
 
-    Attributes
+    Attributes:
     ----------
     summary : str
         Summary of the ingestion process including token estimates.
@@ -138,7 +140,7 @@ class S3Metadata(BaseModel):
 class QueryForm(BaseModel):
     """Form data for the query.
 
-    Attributes
+    Attributes:
     ----------
     input_text : str
         Text or URL supplied in the form.
@@ -183,7 +185,7 @@ class QueryForm(BaseModel):
         token : OptStrForm
             GitHub personal access token (PAT) for accessing private repositories.
 
-        Returns
+        Returns:
         -------
         QueryForm
             The QueryForm instance.

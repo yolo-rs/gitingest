@@ -12,7 +12,12 @@ from typing import TYPE_CHECKING
 import pytest
 
 from gitingest.utils.exceptions import InvalidGitHubTokenError
-from gitingest.utils.git_utils import create_git_auth_header, create_git_repo, is_github_host, validate_github_token
+from gitingest.utils.git_utils import (
+    create_git_auth_header,
+    create_git_repo,
+    is_github_host,
+    validate_github_token,
+)
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -82,7 +87,7 @@ def test_create_git_repo(
     local_path: str,
     url: str,
     token: str | None,
-    should_configure_auth: bool,  # noqa: FBT001
+    should_configure_auth: bool,
     mocker: MockerFixture,
 ) -> None:
     """Test that ``create_git_repo`` creates a proper Git repo object."""
@@ -136,7 +141,9 @@ def test_create_git_repo_helper_calls(
 ) -> None:
     """Test that ``create_git_auth_header`` is invoked only when appropriate."""
     work_dir = tmp_path / "repo"
-    header_mock = mocker.patch("gitingest.utils.git_utils.create_git_auth_header", return_value="key=value")
+    header_mock = mocker.patch(
+        "gitingest.utils.git_utils.create_git_auth_header", return_value="key=value"
+    )
     mock_repo = mocker.MagicMock()
     mocker.patch("git.Repo", return_value=mock_repo)
 
@@ -188,7 +195,11 @@ def test_is_github_host(url: str, *, expected: bool) -> None:
         ("ghp_" + "a" * 36, "https://github.com/owner/repo.git", "github.com"),
         # GitHub Enterprise URLs
         ("ghp_" + "b" * 36, "https://github.company.com", "github.company.com"),
-        ("ghp_" + "c" * 36, "https://github.enterprise.org/owner/repo.git", "github.enterprise.org"),
+        (
+            "ghp_" + "c" * 36,
+            "https://github.enterprise.org/owner/repo.git",
+            "github.enterprise.org",
+        ),
         ("ghp_" + "d" * 36, "http://github.internal", "github.internal"),
     ],
 )
@@ -196,7 +207,9 @@ def test_create_git_auth_header_with_ghe_url(token: str, url: str, expected_host
     """Test that ``create_git_auth_header`` handles GitHub Enterprise URLs correctly."""
     header = create_git_auth_header(token, url=url)
     expected_basic = base64.b64encode(f"x-oauth-basic:{token}".encode()).decode()
-    expected = f"http.https://{expected_hostname}/.extraheader=Authorization: Basic {expected_basic}"
+    expected = (
+        f"http.https://{expected_hostname}/.extraheader=Authorization: Basic {expected_basic}"
+    )
     assert header == expected
 
 

@@ -6,9 +6,10 @@ import asyncio
 import base64
 import re
 import sys
+from collections.abc import Generator, Iterable
 from contextlib import contextmanager
 from pathlib import Path
-from typing import TYPE_CHECKING, Final, Generator, Iterable
+from typing import TYPE_CHECKING, Final
 from urllib.parse import urlparse, urlunparse
 
 import git
@@ -26,7 +27,9 @@ logger = get_logger(__name__)
 # GitHub Personal-Access tokens (classic + fine-grained).
 #   - ghp_ / gho_ / ghu_ / ghs_ / ghr_  → 36 alphanumerics
 #   - github_pat_                       → 22 alphanumerics + "_" + 59 alphanumerics
-_GITHUB_PAT_PATTERN: Final[str] = r"^(?:gh[pousr]_[A-Za-z0-9]{36}|github_pat_[A-Za-z0-9]{22}_[A-Za-z0-9]{59})$"
+_GITHUB_PAT_PATTERN: Final[str] = (
+    r"^(?:gh[pousr]_[A-Za-z0-9]{36}|github_pat_[A-Za-z0-9]{22}_[A-Za-z0-9]{59})$"
+)
 
 
 def is_github_host(url: str) -> bool:
@@ -37,7 +40,7 @@ def is_github_host(url: str) -> bool:
     url : str
         The URL to check
 
-    Returns
+    Returns:
     -------
     bool
         True if the URL is from a GitHub host, False otherwise
@@ -58,12 +61,12 @@ async def run_command(*args: str) -> tuple[bytes, bytes]:
     *args : str
         The command and its arguments to execute.
 
-    Returns
+    Returns:
     -------
     tuple[bytes, bytes]
         A tuple containing the stdout and stderr of the command.
 
-    Raises
+    Raises:
     ------
     RuntimeError
         If command exits with a non-zero status.
@@ -88,7 +91,7 @@ async def ensure_git_installed() -> None:
 
     On Windows, this also checks whether Git is configured to support long file paths.
 
-    Raises
+    Raises:
     ------
     RuntimeError
         If Git is not installed or not accessible.
@@ -130,7 +133,7 @@ async def check_repo_exists(url: str, token: str | None = None) -> bool:
     token : str | None
         GitHub personal access token (PAT) for accessing private repositories.
 
-    Returns
+    Returns:
     -------
     bool
         ``True`` if the repository exists, ``False`` otherwise.
@@ -154,12 +157,12 @@ def _parse_github_url(url: str) -> tuple[str, str, str]:
     url : str
         The URL of the GitHub repository to parse.
 
-    Returns
+    Returns:
     -------
     tuple[str, str, str]
         A tuple containing the hostname, owner, and repository name.
 
-    Raises
+    Raises:
     ------
     ValueError
         If the URL is not a valid GitHub repository URL.
@@ -184,7 +187,9 @@ def _parse_github_url(url: str) -> tuple[str, str, str]:
     return parsed.hostname, owner, repo
 
 
-async def fetch_remote_branches_or_tags(url: str, *, ref_type: str, token: str | None = None) -> list[str]:
+async def fetch_remote_branches_or_tags(
+    url: str, *, ref_type: str, token: str | None = None
+) -> list[str]:
     """Fetch the list of branches or tags from a remote Git repository.
 
     Parameters
@@ -196,12 +201,12 @@ async def fetch_remote_branches_or_tags(url: str, *, ref_type: str, token: str |
     token : str | None
         GitHub personal access token (PAT) for accessing private repositories.
 
-    Returns
+    Returns:
     -------
     list[str]
         A list of branch names available in the remote repository.
 
-    Raises
+    Raises:
     ------
     ValueError
         If the ``ref_type`` parameter is not "branches" or "tags".
@@ -255,12 +260,12 @@ def create_git_repo(local_path: str, url: str, token: str | None = None) -> git.
     token : str | None
         GitHub personal access token (PAT) for accessing private repositories.
 
-    Returns
+    Returns:
     -------
     git.Repo
         A GitPython Repo object configured with authentication.
 
-    Raises
+    Raises:
     ------
     ValueError
         If the local path is not a valid git repository.
@@ -294,12 +299,12 @@ def create_git_auth_header(token: str, url: str = "https://github.com") -> str:
         The GitHub URL to create the authentication header for.
         Defaults to "https://github.com" if not provided.
 
-    Returns
+    Returns:
     -------
     str
         The git config command for setting the authentication header.
 
-    Raises
+    Raises:
     ------
     ValueError
         If the URL is not a valid GitHub repository URL.
@@ -326,7 +331,7 @@ def create_authenticated_url(url: str, token: str | None = None) -> str:
     token : str | None
         GitHub personal access token (PAT) for accessing private repositories.
 
-    Returns
+    Returns:
     -------
     str
         The URL with authentication embedded (for GitHub) or original URL.
@@ -367,7 +372,7 @@ def git_auth_context(url: str, token: str | None = None) -> Generator[tuple[git.
     token : str | None
         GitHub personal access token (PAT) for accessing private repositories.
 
-    Yields
+    Yields:
     ------
     Generator[tuple[git.Git, str]]
         Tuple of (Git command object, authenticated URL to use).
@@ -386,7 +391,7 @@ def validate_github_token(token: str) -> None:
     token : str
         GitHub personal access token (PAT) for accessing private repositories.
 
-    Raises
+    Raises:
     ------
     InvalidGitHubTokenError
         If the token format is invalid.
@@ -406,7 +411,7 @@ async def checkout_partial_clone(config: CloneConfig, token: str | None) -> None
     token : str | None
         GitHub personal access token (PAT) for accessing private repositories.
 
-    Raises
+    Raises:
     ------
     RuntimeError
         If the sparse-checkout configuration fails.
@@ -435,7 +440,7 @@ async def resolve_commit(config: CloneConfig, token: str | None) -> str:
     token : str | None
         GitHub personal access token (PAT) for accessing private repositories.
 
-    Returns
+    Returns:
     -------
     str
         The commit SHA.
@@ -444,9 +449,13 @@ async def resolve_commit(config: CloneConfig, token: str | None) -> str:
     if config.commit:
         commit = config.commit
     elif config.tag:
-        commit = await _resolve_ref_to_sha(config.url, pattern=f"refs/tags/{config.tag}*", token=token)
+        commit = await _resolve_ref_to_sha(
+            config.url, pattern=f"refs/tags/{config.tag}*", token=token
+        )
     elif config.branch:
-        commit = await _resolve_ref_to_sha(config.url, pattern=f"refs/heads/{config.branch}", token=token)
+        commit = await _resolve_ref_to_sha(
+            config.url, pattern=f"refs/heads/{config.branch}", token=token
+        )
     else:
         commit = await _resolve_ref_to_sha(config.url, pattern="HEAD", token=token)
     return commit
@@ -467,12 +476,12 @@ async def _resolve_ref_to_sha(url: str, pattern: str, token: str | None = None) 
     token : str | None
         GitHub personal access token (PAT) for accessing private repositories.
 
-    Returns
+    Returns:
     -------
     str
         The commit SHA.
 
-    Raises
+    Raises:
     ------
     ValueError
         If the ref does not exist in the remote repository.
@@ -508,7 +517,7 @@ def _pick_commit_sha(lines: Iterable[str]) -> str | None:
     lines : Iterable[str]
         The lines of a ``git ls-remote`` output.
 
-    Returns
+    Returns:
     -------
     str | None
         The commit SHA, or ``None`` if no commit SHA is found.

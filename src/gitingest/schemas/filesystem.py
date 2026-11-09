@@ -61,7 +61,7 @@ class FileSystemNode:  # pylint: disable=too-many-instance-attributes
 
         All groups are sorted alphanumerically within themselves.
 
-        Raises
+        Raises:
         ------
         ValueError
             If the node is not a directory.
@@ -87,7 +87,7 @@ class FileSystemNode:  # pylint: disable=too-many-instance-attributes
     def content_string(self) -> str:
         """Return the content of the node as a string, including path and content.
 
-        Returns
+        Returns:
         -------
         str
             A string representation of the node's content.
@@ -96,7 +96,9 @@ class FileSystemNode:  # pylint: disable=too-many-instance-attributes
         parts = [
             SEPARATOR,
             f"{self.type.name}: {str(self.path_str).replace(os.sep, '/')}"
-            + (f" -> {readlink(self.path).name}" if self.type == FileSystemNodeType.SYMLINK else ""),
+            + (
+                f" -> {readlink(self.path).name}" if self.type == FileSystemNodeType.SYMLINK else ""
+            ),
             SEPARATOR,
             f"{self.content}",
         ]
@@ -110,12 +112,12 @@ class FileSystemNode:  # pylint: disable=too-many-instance-attributes
         Heuristically decides whether the file is text or binary by decoding a small chunk of the file
         with multiple encodings and checking for common binary markers.
 
-        Returns
+        Returns:
         -------
         str
             The content of the file, or an error message if the file could not be read.
 
-        Raises
+        Raises:
         ------
         ValueError
             If the node is a directory.

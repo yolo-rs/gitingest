@@ -6,7 +6,7 @@ import hashlib
 import os
 from typing import TYPE_CHECKING
 from urllib.parse import urlparse
-from uuid import UUID  # noqa: TC003 (typing-only-standard-library-import) needed for type checking (pydantic)
+from uuid import UUID
 
 import boto3
 from botocore.exceptions import ClientError
@@ -22,9 +22,13 @@ if TYPE_CHECKING:
 # Initialize logger for this module
 logger = get_logger(__name__)
 
-_s3_ingest_lookup_counter = Counter("gitingest_s3_ingest_lookup", "Number of S3 ingest file lookups")
+_s3_ingest_lookup_counter = Counter(
+    "gitingest_s3_ingest_lookup", "Number of S3 ingest file lookups"
+)
 _s3_ingest_hit_counter = Counter("gitingest_s3_ingest_hit", "Number of S3 ingest file cache hits")
-_s3_ingest_miss_counter = Counter("gitingest_s3_ingest_miss", "Number of S3 ingest file cache misses")
+_s3_ingest_miss_counter = Counter(
+    "gitingest_s3_ingest_miss", "Number of S3 ingest file cache misses"
+)
 
 
 class S3UploadError(Exception):
@@ -93,12 +97,12 @@ def generate_s3_file_path(
     ignore_patterns : set[str]
         Set of patterns specifying which files to exclude.
 
-    Returns
+    Returns:
     -------
     str
         S3 file path string.
 
-    Raises
+    Raises:
     ------
     ValueError
         If the source URL is invalid.
@@ -135,7 +139,9 @@ def create_s3_client() -> BaseClient:
     config = get_s3_config()
     # Log S3 client creation (excluding sensitive info)
     log_config = config.copy()
-    has_credentials = bool(log_config.pop("aws_access_key_id", None) or log_config.pop("aws_secret_access_key", None))
+    has_credentials = bool(
+        log_config.pop("aws_access_key_id", None) or log_config.pop("aws_secret_access_key", None)
+    )
     logger.debug(
         "Creating S3 client",
         extra={
@@ -161,12 +167,12 @@ def upload_to_s3(content: str, s3_file_path: str, ingest_id: UUID) -> str:
     ingest_id : UUID
         The ingest ID to store as an S3 object tag.
 
-    Returns
+    Returns:
     -------
     str
         Public URL to access the uploaded file.
 
-    Raises
+    Raises:
     ------
     ValueError
         If S3 is not enabled.
@@ -255,12 +261,12 @@ def upload_metadata_to_s3(metadata: S3Metadata, s3_file_path: str, ingest_id: UU
     ingest_id : UUID
         The ingest ID to store as an S3 object tag.
 
-    Returns
+    Returns:
     -------
     str
         Public URL to access the uploaded metadata file.
 
-    Raises
+    Raises:
     ------
     ValueError
         If S3 is not enabled.
@@ -324,9 +330,7 @@ def upload_metadata_to_s3(metadata: S3Metadata, s3_file_path: str, ingest_id: UU
         if endpoint:
             public_url = f"{endpoint.rstrip('/')}/{bucket_name}/{metadata_file_path}"
         else:
-            public_url = (
-                f"https://{bucket_name}.s3.{get_s3_config()['region_name']}.amazonaws.com/{metadata_file_path}"
-            )
+            public_url = f"https://{bucket_name}.s3.{get_s3_config()['region_name']}.amazonaws.com/{metadata_file_path}"
 
     # Log successful upload
     logger.info(
@@ -350,7 +354,7 @@ def get_metadata_from_s3(s3_file_path: str) -> S3Metadata | None:
     s3_file_path : str
         The S3 file path for the digest (metadata will use .json extension).
 
-    Returns
+    Returns:
     -------
     S3Metadata | None
         The metadata struct if found, None otherwise.
@@ -402,7 +406,9 @@ def _build_s3_url(key: str) -> str:
     return f"https://{bucket_name}.s3.{config['region_name']}.amazonaws.com/{key}"
 
 
-def _check_object_tags(s3_client: BaseClient, bucket_name: str, key: str, target_ingest_id: UUID) -> bool:
+def _check_object_tags(
+    s3_client: BaseClient, bucket_name: str, key: str, target_ingest_id: UUID
+) -> bool:
     """Check if an S3 object has the matching ingest_id tag."""
     try:
         tags_response = s3_client.get_object_tagging(Bucket=bucket_name, Key=key)
@@ -420,19 +426,21 @@ def check_s3_object_exists(s3_file_path: str) -> bool:
     s3_file_path : str
         The S3 file path to check.
 
-    Returns
+    Returns:
     -------
     bool
         True if the object exists, False otherwise.
 
-    Raises
+    Raises:
     ------
     ClientError
         If there's an S3 error other than 404 (not found).
 
     """
     if not is_s3_enabled():
-        logger.info("S3 not enabled, skipping object existence check", extra={"s3_file_path": s3_file_path})
+        logger.info(
+            "S3 not enabled, skipping object existence check", extra={"s3_file_path": s3_file_path}
+        )
         return False
 
     logger.info("Checking S3 object existence", extra={"s3_file_path": s3_file_path})
@@ -494,7 +502,7 @@ def get_s3_url_for_ingest_id(ingest_id: UUID) -> str | None:
     ingest_id : UUID
         The ingest ID to search for in S3 object tags.
 
-    Returns
+    Returns:
     -------
     str | None
         S3 URL if file exists, None otherwise.

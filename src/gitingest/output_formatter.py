@@ -36,7 +36,7 @@ def format_node(node: FileSystemNode, query: IngestionQuery) -> tuple[str, str, 
     query : IngestionQuery
         The parsed query object containing information about the repository and query parameters.
 
-    Returns
+    Returns:
     -------
     tuple[str, str, str]
         A tuple containing the summary, directory structure, and file contents.
@@ -74,7 +74,7 @@ def _create_summary_prefix(query: IngestionQuery, *, single_file: bool = False) 
     single_file : bool
         A flag indicating whether the summary is for a single file (default: ``False``).
 
-    Returns
+    Returns:
     -------
     str
         A summary prefix string containing repository, commit, branch, and subpath details.
@@ -113,7 +113,7 @@ def _gather_file_contents(node: FileSystemNode) -> str:
     node : FileSystemNode
         The current directory or file node being processed.
 
-    Returns
+    Returns:
     -------
     str
         The concatenated content of all files under the given node.
@@ -149,7 +149,7 @@ def _create_tree_structure(
     is_last : bool
         A flag indicating whether the current node is the last in its directory (default: ``True``).
 
-    Returns
+    Returns:
     -------
     str
         A string representing the directory structure formatted as a tree.
@@ -174,7 +174,9 @@ def _create_tree_structure(
     if node.type == FileSystemNodeType.DIRECTORY and node.children:
         prefix += "    " if is_last else "│   "
         for i, child in enumerate(node.children):
-            tree_str += _create_tree_structure(query, node=child, prefix=prefix, is_last=i == len(node.children) - 1)
+            tree_str += _create_tree_structure(
+                query, node=child, prefix=prefix, is_last=i == len(node.children) - 1
+            )
     return tree_str
 
 
@@ -186,7 +188,7 @@ def _format_token_count(text: str) -> str | None:
     text : str
         The text string for which the token count is to be estimated.
 
-    Returns
+    Returns:
     -------
     str | None
         The formatted number of tokens as a string (e.g., ``"1.2k"``, ``"1.2M"``), or ``None`` if an error occurs.

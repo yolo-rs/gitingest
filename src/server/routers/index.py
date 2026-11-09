@@ -20,7 +20,7 @@ async def home(request: Request) -> HTMLResponse:
     request : Request
         The incoming request object, which provides context for rendering the response.
 
-    Returns
+    Returns:
     -------
     HTMLResponse
         An HTML response containing the rendered home page template, with example repositories

@@ -1,6 +1,5 @@
 """Ingest endpoint for the API."""
 
-from typing import Union
 from uuid import UUID
 
 from fastapi import APIRouter, HTTPException, Request, status
@@ -22,7 +21,7 @@ router = APIRouter()
 @router.post("/api/ingest", responses=COMMON_INGEST_RESPONSES)
 @limiter.limit("10/minute")
 async def api_ingest(
-    request: Request,  # noqa: ARG001 (unused-function-argument) # pylint: disable=unused-argument
+    request: Request,
     ingest_request: IngestRequest,
 ) -> JSONResponse:
     """Ingest a Git repository and return processed content.
@@ -55,7 +54,7 @@ async def api_ingest(
 @router.get("/api/{user}/{repository}", responses=COMMON_INGEST_RESPONSES)
 @limiter.limit("10/minute")
 async def api_ingest_get(
-    request: Request,  # noqa: ARG001 (unused-function-argument) # pylint: disable=unused-argument
+    request: Request,
     user: str,
     repository: str,
     max_file_size: int = DEFAULT_FILE_SIZE_KB,
@@ -97,7 +96,7 @@ async def api_ingest_get(
 @router.get("/api/download/file/{ingest_id}", response_model=None)
 async def download_ingest(
     ingest_id: UUID,
-) -> Union[RedirectResponse, FileResponse]:  # noqa: FA100 (future-rewritable-type-annotation) (pydantic)
+) -> RedirectResponse | FileResponse:
     """Download the first text file produced for an ingest ID.
 
     **This endpoint retrieves the first ``*.txt`` file produced during the ingestion process**
@@ -131,10 +130,14 @@ async def download_ingest(
     # Normalize and validate the directory path
     directory = (TMP_BASE_PATH / str(ingest_id)).resolve()
     if not str(directory).startswith(str(TMP_BASE_PATH.resolve())):
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"Invalid ingest ID: {ingest_id!r}")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail=f"Invalid ingest ID: {ingest_id!r}"
+        )
 
     if not directory.is_dir():
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Digest {ingest_id!r} not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=f"Digest {ingest_id!r} not found"
+        )
 
     try:
         first_txt_file = next(directory.glob("*.txt"))
@@ -145,7 +148,9 @@ async def download_ingest(
         ) from exc
 
     try:
-        return FileResponse(path=first_txt_file, media_type="text/plain", filename=first_txt_file.name)
+        return FileResponse(
+            path=first_txt_file, media_type="text/plain", filename=first_txt_file.name
+        )
     except PermissionError as exc:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,

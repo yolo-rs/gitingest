@@ -4,10 +4,9 @@
 from __future__ import annotations
 
 import asyncio
-from typing import TypedDict
+from typing import TypedDict, Unpack
 
 import click
-from typing_extensions import Unpack
 
 from gitingest.config import MAX_FILE_SIZE, OUTPUT_FILE_NAME
 from gitingest.entrypoint import ingest_async
@@ -84,11 +83,11 @@ def main(**cli_kwargs: Unpack[_CLIArgs]) -> None:
     **cli_kwargs : Unpack[_CLIArgs]
         A dictionary of keyword arguments forwarded to ``ingest_async``.
 
-    Notes
+    Notes:
     -----
     See ``ingest_async`` for a detailed description of each argument.
 
-    Examples
+    Examples:
     --------
     Basic usage:
         $ gitingest
@@ -155,7 +154,7 @@ async def _async_main(
         The path where the output file will be written (default: ``digest.txt`` in current directory).
         Use ``"-"`` to write to ``stdout``.
 
-    Raises
+    Raises:
     ------
     click.Abort
         Raised if an error occurs during execution and the command must be aborted.
@@ -171,7 +170,9 @@ async def _async_main(
         if output_target == "-":
             click.echo("Analyzing source, preparing output for stdout...", err=True)
         else:
-            click.echo(f"Analyzing source, output will be written to '{output_target}'...", err=True)
+            click.echo(
+                f"Analyzing source, output will be written to '{output_target}'...", err=True
+            )
 
         summary, _, _ = await ingest_async(
             source,

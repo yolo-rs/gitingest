@@ -31,7 +31,7 @@ APP_VERSION_URL = os.getenv("APP_VERSION_URL", "https://github.com/coderamp-labs
 def get_version_info() -> dict[str, str]:
     """Get version information including display version and link.
 
-    Returns
+    Returns:
     -------
     dict[str, str]
         Dictionary containing 'version' and 'version_link' keys.

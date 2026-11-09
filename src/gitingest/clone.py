@@ -43,7 +43,7 @@ async def clone_repo(config: CloneConfig, *, token: str | None = None) -> None:
     token : str | None
         GitHub personal access token (PAT) for accessing private repositories.
 
-    Raises
+    Raises:
     ------
     ValueError
         If the repository is not found, if the provided URL is invalid, or if the token format is invalid.
@@ -79,7 +79,9 @@ async def clone_repo(config: CloneConfig, *, token: str | None = None) -> None:
     logger.debug("Checking if repository exists", extra={"url": url})
     if not await check_repo_exists(url, token=token):
         logger.error("Repository not found", extra={"url": url})
-        msg = "Repository not found. Make sure it is public or that you have provided a valid token."
+        msg = (
+            "Repository not found. Make sure it is public or that you have provided a valid token."
+        )
         raise ValueError(msg)
 
     logger.debug("Resolving commit reference")
@@ -87,7 +89,9 @@ async def clone_repo(config: CloneConfig, *, token: str | None = None) -> None:
     logger.debug("Resolved commit", extra={"commit": commit})
 
     # Clone the repository using GitPython with proper authentication
-    logger.info("Executing git clone operation", extra={"url": "<redacted>", "local_path": local_path})
+    logger.info(
+        "Executing git clone operation", extra={"url": "<redacted>", "local_path": local_path}
+    )
     try:
         clone_kwargs = {
             "single_branch": True,
@@ -149,7 +153,7 @@ async def _perform_post_clone_operations(
     commit : str
         The commit SHA to checkout.
 
-    Raises
+    Raises:
     ------
     RuntimeError
         If any Git operation fails.

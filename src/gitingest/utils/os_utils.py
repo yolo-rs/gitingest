@@ -11,7 +11,7 @@ async def ensure_directory_exists_or_create(path: Path) -> None:
     path : Path
         The path to ensure exists.
 
-    Raises
+    Raises:
     ------
     OSError
         If the directory cannot be created.

@@ -98,7 +98,7 @@ async def test_clone_nonexistent_repository(repo_exists_true: AsyncMock) -> None
     ],
 )
 async def test_check_repo_exists(
-    git_command_succeeds: bool,  # noqa: FBT001
+    git_command_succeeds: bool,
     *,
     expected: bool,
     mocker: MockerFixture,
@@ -196,7 +196,9 @@ async def test_clone_with_include_submodules(gitpython_mocks: dict) -> None:
     When ``clone_repo`` is called,
     Then the repository should update submodules after cloning.
     """
-    clone_config = CloneConfig(url=DEMO_URL, local_path=LOCAL_REPO_PATH, branch="main", include_submodules=True)
+    clone_config = CloneConfig(
+        url=DEMO_URL, local_path=LOCAL_REPO_PATH, branch="main", include_submodules=True
+    )
 
     await clone_repo(clone_config)
 
@@ -216,7 +218,7 @@ async def test_check_repo_exists_with_auth_token(mocker: MockerFixture) -> None:
     mock_resolve = mocker.patch("gitingest.utils.git_utils._resolve_ref_to_sha")
     mock_resolve.return_value = "abc123def456"  # Mock SHA
 
-    test_token = "token123"  # noqa: S105
+    test_token = "token123"
     result = await check_repo_exists("https://github.com/test/repo", token=test_token)
 
     assert result is True

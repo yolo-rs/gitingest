@@ -74,7 +74,9 @@ def test_process_notebook_with_worksheets(write_notebook: WriteNotebookFunc) -> 
     # Should not raise a warning
     result_without = process_notebook(nb_without)
 
-    assert result_with == result_without, "Content from the single worksheet should match the top-level equivalent."
+    assert result_with == result_without, (
+        "Content from the single worksheet should match the top-level equivalent."
+    )
 
 
 def test_process_notebook_multiple_worksheets(write_notebook: WriteNotebookFunc) -> None:
@@ -108,7 +110,9 @@ def test_process_notebook_multiple_worksheets(write_notebook: WriteNotebookFunc)
     result_single = process_notebook(nb_single)
 
     assert result_multi != result_single, "Two worksheets should produce more content than one."
-    assert len(result_multi) > len(result_single), "The multi-worksheet notebook should have extra code content."
+    assert len(result_multi) > len(result_single), (
+        "The multi-worksheet notebook should have extra code content."
+    )
     assert "# First Worksheet" in result_single
     assert "# Second Worksheet" not in result_single
     assert "# First Worksheet" in result_multi
@@ -153,7 +157,9 @@ def test_process_notebook_markdown_only(write_notebook: WriteNotebookFunc) -> No
     nb_path = write_notebook("markdown_only.ipynb", notebook_content)
     result = process_notebook(nb_path)
 
-    assert result.count('"""') == expected_count, "Two markdown cells => 2 blocks => 4 triple quotes total."
+    assert result.count('"""') == expected_count, (
+        "Two markdown cells => 2 blocks => 4 triple quotes total."
+    )
     assert "# Markdown Header" in result
     assert "Some more markdown." in result
 
@@ -199,7 +205,9 @@ def test_process_notebook_empty_cells(write_notebook: WriteNotebookFunc) -> None
     nb_path = write_notebook("empty_cells.ipynb", notebook_content)
     result = process_notebook(nb_path)
 
-    assert result.count('"""') == expected_count, "Only one non-empty cell => 1 block => 2 triple quotes"
+    assert result.count('"""') == expected_count, (
+        "Only one non-empty cell => 1 block => 2 triple quotes"
+    )
     assert "# Non-empty markdown" in result
 
 
@@ -243,7 +251,10 @@ def test_process_notebook_with_output(write_notebook: WriteNotebookFunc) -> None
                 "outputs": [
                     {"output_type": "stream", "text": ["my_data"]},
                     {"output_type": "execute_result", "data": {"text/plain": ["[1, 2, 3, 4, 5]"]}},
-                    {"output_type": "display_data", "data": {"text/plain": ["<Figure size 640x480 with 1 Axes>"]}},
+                    {
+                        "output_type": "display_data",
+                        "data": {"text/plain": ["<Figure size 640x480 with 1 Axes>"]},
+                    },
                 ],
             },
         ],
@@ -262,7 +273,9 @@ def test_process_notebook_with_output(write_notebook: WriteNotebookFunc) -> None
         "my_data\n"
     )
 
-    expected_output = "# Output:\n#   my_data\n#   [1, 2, 3, 4, 5]\n#   <Figure size 640x480 with 1 Axes>\n"
+    expected_output = (
+        "# Output:\n#   my_data\n#   [1, 2, 3, 4, 5]\n#   <Figure size 640x480 with 1 Axes>\n"
+    )
 
     expected_combined = expected_source + expected_output
 

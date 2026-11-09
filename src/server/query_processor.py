@@ -12,7 +12,13 @@ from gitingest.query_parser import parse_remote_repo
 from gitingest.utils.git_utils import resolve_commit, validate_github_token
 from gitingest.utils.logging_config import get_logger
 from gitingest.utils.pattern_utils import process_patterns
-from server.models import IngestErrorResponse, IngestResponse, IngestSuccessResponse, PatternType, S3Metadata
+from server.models import (
+    IngestErrorResponse,
+    IngestResponse,
+    IngestSuccessResponse,
+    PatternType,
+    S3Metadata,
+)
 from server.s3_utils import (
     _build_s3_url,
     check_s3_object_exists,
@@ -40,7 +46,9 @@ def _cleanup_repository(clone_config: CloneConfig) -> None:
             shutil.rmtree(local_path)
             logger.info("Successfully cleaned up repository", extra={"local_path": str(local_path)})
     except (PermissionError, OSError):
-        logger.exception("Could not delete repository", extra={"local_path": str(clone_config.local_path)})
+        logger.exception(
+            "Could not delete repository", extra={"local_path": str(clone_config.local_path)}
+        )
 
 
 async def _check_s3_cache(
@@ -68,7 +76,7 @@ async def _check_s3_cache(
     token : str | None
         GitHub token.
 
-    Returns
+    Returns:
     -------
     IngestSuccessResponse | None
         Response if file exists on S3, None otherwise.
@@ -82,7 +90,9 @@ async def _check_s3_cache(
         clone_config = query.extract_clone_config()
         logger.info("Resolving commit for S3 cache check", extra={"repo_url": query.url})
         query.commit = await resolve_commit(clone_config, token=token)
-        logger.info("Commit resolved successfully", extra={"repo_url": query.url, "commit": query.commit})
+        logger.info(
+            "Commit resolved successfully", extra={"repo_url": query.url, "commit": query.commit}
+        )
 
         # Generate S3 file path using the resolved commit
         s3_file_path = generate_s3_file_path(
@@ -130,9 +140,14 @@ async def _check_s3_cache(
             )
     except Exception as exc:
         # Log the exception but don't fail the entire request
-        logger.warning("S3 cache check failed, falling back to normal cloning", extra={"error": str(exc)})
+        logger.warning(
+            "S3 cache check failed, falling back to normal cloning", extra={"error": str(exc)}
+        )
 
-    logger.info("Digest not found in S3 cache, proceeding with normal cloning", extra={"repo_url": query.url})
+    logger.info(
+        "Digest not found in S3 cache, proceeding with normal cloning",
+        extra={"repo_url": query.url},
+    )
     return None
 
 
@@ -205,12 +220,12 @@ def _generate_digest_url(query: IngestionQuery) -> str:
     query : IngestionQuery
         The query object containing repository information.
 
-    Returns
+    Returns:
     -------
     str
         The digest URL.
 
-    Raises
+    Raises:
     ------
     RuntimeError
         If S3 is enabled but no S3 URL was generated.
@@ -251,12 +266,12 @@ async def process_query(
     token : str | None
         GitHub personal access token (PAT) for accessing private repositories.
 
-    Returns
+    Returns:
     -------
     IngestResponse
         A union type, corresponding to IngestErrorResponse or IngestSuccessResponse
 
-    Raises
+    Raises:
     ------
     RuntimeError
         If the commit hash is not found (should never happen).
@@ -268,11 +283,15 @@ async def process_query(
     try:
         query = await parse_remote_repo(input_text, token=token)
     except Exception as exc:
-        logger.warning("Failed to parse remote repository", extra={"input_text": input_text, "error": str(exc)})
+        logger.warning(
+            "Failed to parse remote repository", extra={"input_text": input_text, "error": str(exc)}
+        )
         return IngestErrorResponse(error=str(exc))
 
     query.url = cast("str", query.url)
-    query.max_file_size = max_file_size * 1024  # Convert to bytes since we currently use KB in higher levels
+    query.max_file_size = (
+        max_file_size * 1024
+    )  # Convert to bytes since we currently use KB in higher levels
     query.ignore_patterns, query.include_patterns = process_patterns(
         exclude_patterns=pattern if pattern_type == PatternType.EXCLUDE else None,
         include_patterns=pattern if pattern_type == PatternType.INCLUDE else None,
@@ -370,7 +389,9 @@ def _print_query(url: str, max_file_size: int, pattern_type: str, pattern: str) 
     )
 
 
-def _print_error(url: str, exc: Exception, max_file_size: int, pattern_type: str, pattern: str) -> None:
+def _print_error(
+    url: str, exc: Exception, max_file_size: int, pattern_type: str, pattern: str
+) -> None:
     """Print a formatted error message for debugging.
 
     Parameters
@@ -399,7 +420,9 @@ def _print_error(url: str, exc: Exception, max_file_size: int, pattern_type: str
     )
 
 
-def _print_success(url: str, max_file_size: int, pattern_type: str, pattern: str, summary: str) -> None:
+def _print_success(
+    url: str, max_file_size: int, pattern_type: str, pattern: str, summary: str
+) -> None:
     """Print a formatted success message for debugging.
 
     Parameters

@@ -14,7 +14,7 @@ def readlink(path: Path) -> Path:
     path : Path
         Path to the symlink.
 
-    Returns
+    Returns:
     -------
     Path
         The target of the symlink.
@@ -35,7 +35,7 @@ def removesuffix(s: str, suffix: str) -> str:
     suffix : str
         Suffix to remove.
 
-    Returns
+    Returns:
     -------
     str
         String with suffix removed.

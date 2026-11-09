@@ -11,7 +11,7 @@ class CloneConfig(BaseModel):  # pylint: disable=too-many-instance-attributes
     This model holds the necessary parameters for cloning a repository to a local path, including
     the repository's URL, the target local path, and optional parameters for a specific commit, branch, or tag.
 
-    Attributes
+    Attributes:
     ----------
     url : str
         The URL of the Git repository to clone.

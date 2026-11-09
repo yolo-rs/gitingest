@@ -22,7 +22,7 @@ async def catch_all(request: Request, full_path: str) -> HTMLResponse:
     full_path : str
         The full path extracted from the URL, which is used to build the Git URL.
 
-    Returns
+    Returns:
     -------
     HTMLResponse
         An HTML response containing the rendered template, with the Git URL

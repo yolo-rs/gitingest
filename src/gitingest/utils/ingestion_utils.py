@@ -24,7 +24,7 @@ def _should_include(path: Path, base_path: Path, include_patterns: set[str]) -> 
     include_patterns : set[str]
         A set of patterns to check against the relative path.
 
-    Returns
+    Returns:
     -------
     bool
         ``True`` if the path matches any of the include patterns, ``False`` otherwise.
@@ -52,7 +52,7 @@ def _should_exclude(path: Path, base_path: Path, ignore_patterns: set[str]) -> b
     ignore_patterns : set[str]
         A set of patterns to check against the relative path.
 
-    Returns
+    Returns:
     -------
     bool
         ``True`` if the path matches any of the ignore patterns, ``False`` otherwise.
@@ -76,7 +76,7 @@ def _relative_or_none(path: Path, base: Path) -> Path | None:
     base : Path
         The base directory from which the relative path is calculated.
 
-    Returns
+    Returns:
     -------
     Path | None
         The relative path of ``path`` to ``base``, or ``None`` if ``path`` is outside ``base``.

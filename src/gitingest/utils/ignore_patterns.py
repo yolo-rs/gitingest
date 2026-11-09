@@ -183,7 +183,7 @@ def load_ignore_patterns(root: Path, filename: str) -> set[str]:
     filename : str
         The filename to look for in each directory.
 
-    Returns
+    Returns:
     -------
     set[str]
         A set of ignore patterns extracted from the ``filename`` file found under the ``root`` directory.
@@ -207,7 +207,7 @@ def _parse_ignore_file(ignore_file: Path, root: Path) -> set[str]:
     root : Path
         The root directory of the repository.
 
-    Returns
+    Returns:
     -------
     set[str]
         A set of ignore patterns.

@@ -2,7 +2,8 @@
 
 import asyncio
 import functools
-from typing import Awaitable, Callable, TypeVar
+from collections.abc import Awaitable, Callable
+from typing import TypeVar
 
 from gitingest.utils.compat_typing import ParamSpec
 from gitingest.utils.exceptions import AsyncTimeoutError
@@ -23,7 +24,7 @@ def async_timeout(seconds: int) -> Callable[[Callable[P, Awaitable[T]]], Callabl
     seconds : int
         The maximum allowed time (in seconds) for the asynchronous function to complete.
 
-    Returns
+    Returns:
     -------
     Callable[[Callable[P, Awaitable[T]]], Callable[P, Awaitable[T]]]
         A decorator that, when applied to an async function, ensures the function
@@ -37,7 +38,7 @@ def async_timeout(seconds: int) -> Callable[[Callable[P, Awaitable[T]]], Callabl
         async def wrapper(*args: P.args, **kwargs: P.kwargs) -> T:
             try:
                 return await asyncio.wait_for(func(*args, **kwargs), timeout=seconds)
-            except asyncio.TimeoutError as exc:
+            except TimeoutError as exc:
                 msg = f"Operation timed out after {seconds} seconds"
                 raise AsyncTimeoutError(msg) from exc
 

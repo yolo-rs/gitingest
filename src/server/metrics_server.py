@@ -25,7 +25,7 @@ async def metrics() -> HTMLResponse:
 
     This endpoint is only accessible from the local network.
 
-    Returns
+    Returns:
     -------
     HTMLResponse
         Prometheus metrics in text format
@@ -48,7 +48,7 @@ def start_metrics_server(host: str = "127.0.0.1", port: int = 9090) -> None:
     port : int
         The port to bind to (default: 9090)
 
-    Returns
+    Returns:
     -------
     None
 

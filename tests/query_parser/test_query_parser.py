@@ -7,8 +7,9 @@ paths.
 # pylint: disable=too-many-arguments, too-many-positional-arguments
 from __future__ import annotations
 
+from collections.abc import Callable
 from pathlib import Path
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING
 
 import pytest
 
@@ -260,7 +261,7 @@ async def test_parse_url_unsupported_host(stub_resolve_sha: dict[str, AsyncMock]
     """
     url = "https://only-domain.com"
 
-    with pytest.raises(ValueError, match="Unknown domain 'only-domain.com' in URL"):
+    with pytest.raises(ValueError, match=r"Unknown domain 'only-domain\.com' in URL"):
         await parse_remote_repo(url)
 
     stub_resolve_sha["head"].assert_not_awaited()

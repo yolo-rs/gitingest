@@ -20,7 +20,7 @@ _CHUNK_SIZE = 1024  # bytes
 def _get_preferred_encodings() -> list[str]:
     """Get list of encodings to try, prioritized for the current platform.
 
-    Returns
+    Returns:
     -------
     list[str]
         List of encoding names to try in priority order, starting with the
@@ -41,7 +41,7 @@ def _read_chunk(path: Path) -> bytes | None:
     path : Path
         The path to the file to read.
 
-    Returns
+    Returns:
     -------
     bytes | None
         The first ``_CHUNK_SIZE`` bytes of ``path``, or ``None`` on any ``OSError``.
@@ -64,7 +64,7 @@ def _decodes(chunk: bytes, encoding: str) -> bool:
     encoding : str
         The encoding to use to decode the chunk.
 
-    Returns
+    Returns:
     -------
     bool
         ``True`` if the chunk decodes cleanly with the encoding, ``False`` otherwise.

@@ -15,7 +15,7 @@ from typing import Any
 from loguru import logger
 
 
-def json_sink(message: Any) -> None:  # noqa: ANN401
+def json_sink(message: Any) -> None:
     """Create JSON formatted log output.
 
     Parameters
@@ -59,7 +59,7 @@ def format_extra_fields(record: dict) -> str:
     record : dict
         The loguru record dictionary
 
-    Returns
+    Returns:
     -------
     str
         JSON formatted extra fields or empty string
@@ -69,7 +69,9 @@ def format_extra_fields(record: dict) -> str:
         return ""
 
     # Filter out loguru's internal extra fields
-    filtered_extra = {k: v for k, v in record["extra"].items() if not k.startswith("_") and k not in ["name"]}
+    filtered_extra = {
+        k: v for k, v in record["extra"].items() if not k.startswith("_") and k not in ["name"]
+    }
 
     # Handle nested extra structure - if there's an 'extra' key, use its contents
     if "extra" in filtered_extra and isinstance(filtered_extra["extra"], dict):
@@ -90,7 +92,7 @@ def extra_filter(record: dict) -> dict:
     record : dict
         The loguru record dictionary
 
-    Returns
+    Returns:
     -------
     dict
         Modified record with extra fields appended to message
@@ -185,7 +187,7 @@ def get_logger(name: str | None = None) -> logger.__class__:
     name : str | None, optional
         Logger name, defaults to the calling module name
 
-    Returns
+    Returns:
     -------
     logger.__class__
         Configured logger instance

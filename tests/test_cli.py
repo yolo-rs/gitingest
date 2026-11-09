@@ -56,7 +56,9 @@ def test_cli_writes_file(
 
     # File side-effect
     sarif_file = tmp_path / OUTPUT_FILE_NAME
-    assert sarif_file.exists() is expect_file, f"{OUTPUT_FILE_NAME} existence did not match expectation"
+    assert sarif_file.exists() is expect_file, (
+        f"{OUTPUT_FILE_NAME} existence did not match expectation"
+    )
 
 
 def test_cli_with_stdout_output() -> None:
@@ -70,7 +72,9 @@ def test_cli_with_stdout_output() -> None:
         result = _invoke_isolated_cli_runner(["./", "--output", "-", "--exclude-pattern", "tests/"])
 
         # ─── core expectations (stdout) ────────────────────────────────────-
-        assert result.exit_code == 0, f"CLI exited with code {result.exit_code}, stderr: {result.stderr}"
+        assert result.exit_code == 0, (
+            f"CLI exited with code {result.exit_code}, stderr: {result.stderr}"
+        )
         assert "---" in result.stdout, "Expected file separator '---' not found in STDOUT"
         assert "src/gitingest/__main__.py" in result.stdout, (
             "Expected content (e.g., src/gitingest/__main__.py) not found in STDOUT"

@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from pathlib import Path  # noqa: TC003 (typing-only-standard-library-import) needed for type checking (pydantic)
-from uuid import UUID  # noqa: TC003 (typing-only-standard-library-import) needed for type checking (pydantic)
+from pathlib import Path
+from uuid import UUID
 
 from pydantic import BaseModel, Field
 
@@ -14,7 +14,7 @@ from gitingest.schemas.cloning import CloneConfig
 class IngestionQuery(BaseModel):  # pylint: disable=too-many-instance-attributes
     """Pydantic model to store the parsed details of the repository or file path.
 
-    Attributes
+    Attributes:
     ----------
     host : str | None
         The host of the repository.
@@ -66,7 +66,9 @@ class IngestionQuery(BaseModel):  # pylint: disable=too-many-instance-attributes
     commit: str | None = None
     tag: str | None = None
     max_file_size: int = Field(default=MAX_FILE_SIZE)
-    ignore_patterns: set[str] = Field(default_factory=set)  # TODO: ssame type for ignore_* and include_* patterns
+    ignore_patterns: set[str] = Field(
+        default_factory=set
+    )  # TODO: ssame type for ignore_* and include_* patterns
     include_patterns: set[str] | None = None
     include_submodules: bool = Field(default=False)
     s3_url: str | None = None
@@ -74,12 +76,12 @@ class IngestionQuery(BaseModel):  # pylint: disable=too-many-instance-attributes
     def extract_clone_config(self) -> CloneConfig:
         """Extract the relevant fields for the CloneConfig object.
 
-        Returns
+        Returns:
         -------
         CloneConfig
             A CloneConfig object containing the relevant fields.
 
-        Raises
+        Raises:
         ------
         ValueError
             If the ``url`` parameter is not provided.

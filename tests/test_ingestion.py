@@ -90,7 +90,12 @@ class PatternScenario(TypedDict):
                     },
                     "ignore_patterns": {*()},
                     "expected_num_files": 4,
-                    "expected_content": {"file1.txt", "file2.py", "dir1/file_dir1.txt", "dir2/file_dir2.txt"},
+                    "expected_content": {
+                        "file1.txt",
+                        "file2.py",
+                        "dir1/file_dir1.txt",
+                        "dir2/file_dir2.txt",
+                    },
                     "expected_structure": {"test_repo/", "dir1/", "dir2/"},
                     "expected_not_structure": {"src/", "subdir/"},
                 },

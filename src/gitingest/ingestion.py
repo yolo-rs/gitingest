@@ -30,12 +30,12 @@ def ingest_query(query: IngestionQuery) -> tuple[str, str, str]:
     query : IngestionQuery
         The parsed query object containing information about the repository and query parameters.
 
-    Returns
+    Returns:
     -------
     tuple[str, str, str]
         A tuple containing the summary, directory structure, and file contents.
 
-    Raises
+    Raises:
     ------
     ValueError
         If the path cannot be found, is not a file, or the file has no content.
@@ -140,14 +140,20 @@ def _process_node(node: FileSystemNode, query: IngestionQuery, stats: FileSystem
         return
 
     for sub_path in node.path.iterdir():
-        if query.ignore_patterns and _should_exclude(sub_path, query.local_path, query.ignore_patterns):
+        if query.ignore_patterns and _should_exclude(
+            sub_path, query.local_path, query.ignore_patterns
+        ):
             continue
 
-        if query.include_patterns and not _should_include(sub_path, query.local_path, query.include_patterns):
+        if query.include_patterns and not _should_include(
+            sub_path, query.local_path, query.include_patterns
+        ):
             continue
 
         if sub_path.is_symlink():
-            _process_symlink(path=sub_path, parent_node=node, stats=stats, local_path=query.local_path)
+            _process_symlink(
+                path=sub_path, parent_node=node, stats=stats, local_path=query.local_path
+            )
         elif sub_path.is_file():
             if sub_path.stat().st_size > query.max_file_size:
                 logger.debug(
@@ -184,7 +190,9 @@ def _process_node(node: FileSystemNode, query: IngestionQuery, stats: FileSystem
     node.sort_children()
 
 
-def _process_symlink(path: Path, parent_node: FileSystemNode, stats: FileSystemStats, local_path: Path) -> None:
+def _process_symlink(
+    path: Path, parent_node: FileSystemNode, stats: FileSystemStats, local_path: Path
+) -> None:
     """Process a symlink in the file system.
 
     This function checks the symlink's target.
@@ -213,7 +221,9 @@ def _process_symlink(path: Path, parent_node: FileSystemNode, stats: FileSystemS
     parent_node.file_count += 1
 
 
-def _process_file(path: Path, parent_node: FileSystemNode, stats: FileSystemStats, local_path: Path) -> None:
+def _process_file(
+    path: Path, parent_node: FileSystemNode, stats: FileSystemStats, local_path: Path
+) -> None:
     """Process a file in the file system.
 
     This function checks the file's size, increments the statistics, and reads its content.
@@ -286,7 +296,7 @@ def limit_exceeded(stats: FileSystemStats, depth: int) -> bool:
     depth : int
         The current depth of directory traversal.
 
-    Returns
+    Returns:
     -------
     bool
         ``True`` if any limit has been exceeded, ``False`` otherwise.

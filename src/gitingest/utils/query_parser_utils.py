@@ -37,7 +37,9 @@ class PathKind(StrEnum):
     PULL = "pull"
 
 
-async def _fallback_to_root(query: IngestionQuery, token: str | None, warn_msg: str | None = None) -> IngestionQuery:
+async def _fallback_to_root(
+    query: IngestionQuery, token: str | None, warn_msg: str | None = None
+) -> IngestionQuery:
     """Fallback to the root of the repository if no extra path parts are provided.
 
     Parameters
@@ -49,7 +51,7 @@ async def _fallback_to_root(query: IngestionQuery, token: str | None, warn_msg: 
     warn_msg : str | None
         The message to warn.
 
-    Returns
+    Returns:
     -------
     IngestionQuery
         The query with the fallback to the root of the repository.
@@ -72,7 +74,7 @@ async def _normalise_source(raw: str, token: str | None) -> ParseResult:
     token : str | None
         The token to use to access the repository.
 
-    Returns
+    Returns:
     -------
     ParseResult
         The parsed URL.
@@ -98,7 +100,9 @@ async def _normalise_source(raw: str, token: str | None) -> ParseResult:
     return urlparse(f"https://{host}/{raw}")
 
 
-async def _try_domains_for_user_and_repo(user_name: str, repo_name: str, token: str | None = None) -> str:
+async def _try_domains_for_user_and_repo(
+    user_name: str, repo_name: str, token: str | None = None
+) -> str:
     """Attempt to find a valid repository host for the given ``user_name`` and ``repo_name``.
 
     Parameters
@@ -110,12 +114,12 @@ async def _try_domains_for_user_and_repo(user_name: str, repo_name: str, token: 
     token : str | None
         GitHub personal access token (PAT) for accessing private repositories.
 
-    Returns
+    Returns:
     -------
     str
         The domain of the valid repository host.
 
-    Raises
+    Raises:
     ------
     ValueError
         If no valid repository host is found for the given ``user_name`` and ``repo_name``.
@@ -123,7 +127,9 @@ async def _try_domains_for_user_and_repo(user_name: str, repo_name: str, token: 
     """
     for domain in KNOWN_GIT_HOSTS:
         candidate = f"https://{domain}/{user_name}/{repo_name}"
-        if await check_repo_exists(candidate, token=token if domain.startswith("github.") else None):
+        if await check_repo_exists(
+            candidate, token=token if domain.startswith("github.") else None
+        ):
             return domain
 
     msg = f"Could not find a valid repository host for '{user_name}/{repo_name}'."
@@ -141,7 +147,7 @@ def _is_valid_git_commit_hash(commit: str) -> bool:
     commit : str
         The string to validate as a Git commit hash.
 
-    Returns
+    Returns:
     -------
     bool
         ``True`` if the string is a valid 40-character Git commit hash, otherwise ``False``.
@@ -163,7 +169,7 @@ def _validate_host(host: str) -> None:
     host : str
         Hostname (case-insensitive).
 
-    Raises
+    Raises:
     ------
     ValueError
         If the host cannot be recognised as a probable Git hosting domain.
@@ -186,7 +192,7 @@ def _looks_like_git_host(host: str) -> bool:
     host : str
         Hostname (case-insensitive).
 
-    Returns
+    Returns:
     -------
     bool
         ``True`` if the host looks like a Git host, otherwise ``False``.
@@ -204,7 +210,7 @@ def _validate_url_scheme(scheme: str) -> None:
     scheme : str
         The scheme to validate.
 
-    Raises
+    Raises:
     ------
     ValueError
         If the scheme is not 'http' or 'https'.
@@ -224,12 +230,12 @@ def _get_user_and_repo_from_path(path: str) -> tuple[str, str]:
     path : str
         The path to extract the user and repository names from.
 
-    Returns
+    Returns:
     -------
     tuple[str, str]
         A tuple containing the user and repository names.
 
-    Raises
+    Raises:
     ------
     ValueError
         If the path does not contain at least two parts.

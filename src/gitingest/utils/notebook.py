@@ -26,12 +26,12 @@ def process_notebook(file: Path, *, include_output: bool = True) -> str:
     include_output : bool
         Whether to include cell outputs in the generated script (default: ``True``).
 
-    Returns
+    Returns:
     -------
     str
         The executable Python script as a string.
 
-    Raises
+    Raises:
     ------
     InvalidNotebookError
         If the notebook file is invalid or cannot be processed.
@@ -84,12 +84,12 @@ def _process_cell(cell: dict[str, Any], *, include_output: bool) -> str | None:
     include_output : bool
         Whether to include cell outputs in the generated script.
 
-    Returns
+    Returns:
     -------
     str | None
         The cell content as a string, or ``None`` if the cell is empty.
 
-    Raises
+    Raises:
     ------
     ValueError
         If an unexpected cell type is encountered.
@@ -133,12 +133,12 @@ def _extract_output(output: dict[str, Any]) -> list[str]:
     output : dict[str, Any]
         The output dictionary from a Jupyter notebook cell.
 
-    Returns
+    Returns:
     -------
     list[str]
         The output as a list of strings.
 
-    Raises
+    Raises:
     ------
     ValueError
         If an unknown output type is encountered.

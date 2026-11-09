@@ -37,7 +37,7 @@ async def parse_remote_repo(source: str, token: str | None = None) -> IngestionQ
     token : str | None
         GitHub personal access token (PAT) for accessing private repositories.
 
-    Returns
+    Returns:
     -------
     IngestionQuery
         A dictionary containing the parsed details of the repository.
@@ -83,7 +83,9 @@ async def parse_remote_repo(source: str, token: str | None = None) -> IngestionQ
 
     if query.type not in {PathKind.TREE, PathKind.BLOB}:
         # TODO: Handle other types
-        msg = f"Warning: Type '{query.type}' is not yet supported: {url}. Returning repository root."
+        msg = (
+            f"Warning: Type '{query.type}' is not yet supported: {url}. Returning repository root."
+        )
         return await _fallback_to_root(query, token=token, warn_msg=msg)
 
     # Commit, branch, or tag
@@ -127,7 +129,7 @@ def parse_local_dir_path(path_str: str) -> IngestionQuery:
     path_str : str
         The file path to parse.
 
-    Returns
+    Returns:
     -------
     IngestionQuery
         A dictionary containing the parsed details of the file path.
@@ -158,7 +160,7 @@ async def _configure_branch_or_tag(
     token : str | None
         GitHub personal access token (PAT) for accessing private repositories.
 
-    Returns
+    Returns:
     -------
     str | None
         The branch or tag name if found, otherwise ``None``.
@@ -168,7 +170,9 @@ async def _configure_branch_or_tag(
 
     try:
         # Fetch the list of branches or tags from the remote repository
-        branches_or_tags: list[str] = await fetch_remote_branches_or_tags(url, ref_type=_ref_type, token=token)
+        branches_or_tags: list[str] = await fetch_remote_branches_or_tags(
+            url, ref_type=_ref_type, token=token
+        )
     except RuntimeError as exc:
         # If remote discovery fails, we optimistically treat the first path segment as the branch/tag.
         msg = f"Warning: Failed to fetch {_ref_type}: {exc}"

@@ -15,7 +15,7 @@ def resolve_token(token: str | None) -> str | None:
     token : str | None
         GitHub personal access token (PAT) for accessing private repositories.
 
-    Returns
+    Returns:
     -------
     str | None
         The resolved token.

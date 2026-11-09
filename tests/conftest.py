@@ -9,8 +9,9 @@ from __future__ import annotations
 import json
 import sys
 import uuid
+from collections.abc import Callable
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, Dict
+from typing import TYPE_CHECKING, Any
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
@@ -20,7 +21,7 @@ from gitingest.query_parser import IngestionQuery
 if TYPE_CHECKING:
     from pytest_mock import MockerFixture
 
-WriteNotebookFunc = Callable[[str, Dict[str, Any]], Path]
+WriteNotebookFunc = Callable[[str, dict[str, Any]], Path]
 
 DEMO_URL = "https://github.com/user/repo"
 LOCAL_REPO_PATH = "/tmp/repo"
@@ -191,7 +192,9 @@ def stub_branches(mocker: MockerFixture) -> Callable[[list[str]], None]:
         )
 
         # Patch GitPython's ls_remote method to return the mocked output
-        ls_remote_output = "\n".join(f"{DEMO_COMMIT[:12]}{i:02d}\trefs/heads/{b}" for i, b in enumerate(branches))
+        ls_remote_output = "\n".join(
+            f"{DEMO_COMMIT[:12]}{i:02d}\trefs/heads/{b}" for i, b in enumerate(branches)
+        )
         mock_git_cmd = mocker.patch("git.Git")
         mock_git_cmd.return_value.ls_remote.return_value = ls_remote_output
 

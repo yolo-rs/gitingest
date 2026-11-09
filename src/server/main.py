@@ -35,9 +35,13 @@ if os.getenv("GITINGEST_SENTRY_ENABLED") is not None:
     if sentry_dsn:
         # Configure Sentry options from environment variables
         traces_sample_rate = float(os.getenv("GITINGEST_SENTRY_TRACES_SAMPLE_RATE", "1.0"))
-        profile_session_sample_rate = float(os.getenv("GITINGEST_SENTRY_PROFILE_SESSION_SAMPLE_RATE", "1.0"))
+        profile_session_sample_rate = float(
+            os.getenv("GITINGEST_SENTRY_PROFILE_SESSION_SAMPLE_RATE", "1.0")
+        )
         profile_lifecycle_raw = os.getenv("GITINGEST_SENTRY_PROFILE_LIFECYCLE", "trace")
-        profile_lifecycle = profile_lifecycle_raw if profile_lifecycle_raw in ("manual", "trace") else "trace"
+        profile_lifecycle = (
+            profile_lifecycle_raw if profile_lifecycle_raw in ("manual", "trace") else "trace"
+        )
         send_default_pii = os.getenv("GITINGEST_SENTRY_SEND_DEFAULT_PII", "true").lower() == "true"
         sentry_environment = os.getenv("GITINGEST_SENTRY_ENVIRONMENT", "")
 
@@ -190,8 +194,12 @@ def openapi_json_get() -> JSONResponse:
     return JSONResponse(app.openapi())
 
 
-@app.api_route("/api", methods=["POST", "PUT", "DELETE", "OPTIONS", "HEAD"], include_in_schema=False)
-@app.api_route("/api/", methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"], include_in_schema=False)
+@app.api_route(
+    "/api", methods=["POST", "PUT", "DELETE", "OPTIONS", "HEAD"], include_in_schema=False
+)
+@app.api_route(
+    "/api/", methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"], include_in_schema=False
+)
 def openapi_json() -> JSONResponse:
     """Return the OpenAPI schema for various HTTP methods.
 

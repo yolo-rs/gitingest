@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import re
-from typing import Iterable
+from collections.abc import Iterable
 
 from gitingest.utils.ignore_patterns import DEFAULT_IGNORE_PATTERNS
 
@@ -23,7 +23,7 @@ def process_patterns(
     include_patterns : str | set[str] | None
         Include patterns to process.
 
-    Returns
+    Returns:
     -------
     tuple[set[str], set[str] | None]
         A tuple containing the processed ignore patterns and include patterns.
@@ -54,7 +54,7 @@ def _parse_patterns(patterns: str | Iterable[str]) -> set[str]:
         One pattern string or an iterable of pattern strings. Each pattern may contain multiple comma- or
         whitespace-separated sub-patterns, e.g. "src/*, tests *.md".
 
-    Returns
+    Returns:
     -------
     set[str]
         Normalized patterns with Windows back-slashes converted to forward-slashes and duplicates removed.

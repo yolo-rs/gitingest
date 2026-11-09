@@ -37,7 +37,9 @@ def test_process_patterns_include_and_ignore_overlap() -> None:
     When ``process_patterns`` is called,
     Then "*.py" should be removed from ignore patterns.
     """
-    exclude_patterns, include_patterns = process_patterns(exclude_patterns={"*.py", "*.txt"}, include_patterns="*.py")
+    exclude_patterns, include_patterns = process_patterns(
+        exclude_patterns={"*.py", "*.txt"}, include_patterns="*.py"
+    )
 
     assert include_patterns == {"*.py"}
     assert exclude_patterns is not None
